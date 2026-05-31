@@ -1,0 +1,271 @@
+
+<h2 class="sr-only">Build Log GenAI #4 — ICLR 2026 Outstanding Paper post and Python implementation</h2>
+
+<style>
+.tag { display:inline-block; font-size:11px; font-weight:500; padding:2px 9px; border-radius:99px; margin:2px; }
+.badge-award { background:#EAF3DE; color:#27500A; font-size:11px; font-weight:500; padding:3px 11px; border-radius:99px; }
+.badge-lab { background:#E6F1FB; color:#0C447C; font-size:11px; padding:3px 9px; border-radius:99px; }
+.stat-row { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:1rem 0; }
+.stat-box { background:var(--color-background-secondary); border-radius:var(--border-radius-md); padding:12px; text-align:center; }
+.stat-num { font-size:22px; font-weight:500; color:var(--color-text-primary); }
+.stat-lbl { font-size:11px; color:var(--color-text-secondary); margin-top:2px; }
+.finding { border-left:2px solid #378ADD; padding:6px 12px; margin:6px 0; font-size:13px; color:var(--color-text-primary); background:var(--color-background-secondary); border-radius:0 var(--border-radius-md) var(--border-radius-md) 0; }
+.finding b { font-weight:500; }
+pre { margin:0; font-size:11.5px; font-family:var(--font-mono); background:var(--color-background-secondary); padding:1rem; border-radius:var(--border-radius-md); overflow-x:auto; line-height:1.65; color:var(--color-text-primary); white-space:pre; }
+.tab-row { display:flex; gap:6px; margin-bottom:1rem; }
+.tab-btn { font-size:12px; padding:5px 14px; cursor:pointer; border-radius:var(--border-radius-md); border:0.5px solid var(--color-border-secondary); background:var(--color-background-primary); color:var(--color-text-secondary); }
+.tab-btn.active { background:var(--color-background-secondary); color:var(--color-text-primary); font-weight:500; border-color:var(--color-border-primary); }
+.panel { display:none; }
+.panel.active { display:block; }
+</style>
+
+<div style="max-width:680px; padding:1rem 0; font-family:var(--font-sans);">
+
+  <div style="display:flex; align-items:center; gap:8px; margin-bottom:1.25rem; flex-wrap:wrap;">
+    <span style="font-size:13px; font-weight:500; color:var(--color-text-secondary);">Build Log: GenAI</span>
+    <span style="font-size:13px; color:var(--color-text-secondary);">·</span>
+    <span style="background:#FAEEDA; color:#633806; font-size:11px; font-weight:500; padding:3px 10px; border-radius:99px;">#4</span>
+    <span class="badge-award" aria-label="ICLR 2026 Outstanding Paper"><i class="ti ti-award" style="font-size:12px;vertical-align:-1px;" aria-hidden="true"></i> ICLR 2026 Outstanding Paper</span>
+    <span class="badge-lab">Microsoft Research + Salesforce</span>
+  </div>
+
+  <div class="tab-row" role="tablist">
+    <button class="tab-btn active" onclick="switchTab('post')" role="tab" aria-selected="true">LinkedIn post</button>
+    <button class="tab-btn" onclick="switchTab('code')" role="tab" aria-selected="false">Python code</button>
+    <button class="tab-btn" onclick="switchTab('paper')" role="tab" aria-selected="false">Paper breakdown</button>
+  </div>
+
+  <div id="panel-post" class="panel active">
+    <div style="background:var(--color-background-primary); border:0.5px solid var(--color-border-tertiary); border-radius:var(--border-radius-lg); padding:1.5rem 1.75rem;">
+      <p style="font-size:14px; line-height:1.85; color:var(--color-text-primary); margin:0; white-space:pre-wrap;">Build log: GenAI #4: Your LLM is 39% worse the moment users start chatting naturally — here's the paper and the fix I built.
+
+Just went deep on the <b style="font-weight:500;">ICLR 2026 Outstanding Paper</b> that no one is talking about enough.
+
+<b style="font-weight:500;">"LLMs Get Lost In Multi-Turn Conversation"</b> — Microsoft Research + Salesforce — and it hit different.
+
+We obsess over benchmarks on single-turn, fully-specified prompts. But that is NOT how real users interact. Real users trickle information across turns. They're vague at first. They refine as they go. And that's exactly where every major LLM collapses.
+
+The paper's findings across 200,000+ simulated conversations:
+
+^ Average performance drop: <b style="font-weight:500;">39%</b> in multi-turn vs. single-turn across 6 generation tasks.
+
+^ Root cause: NOT a loss of intelligence — it's a catastrophic spike in <b style="font-weight:500;">unreliability</b>. Once the model takes a wrong turn early in a conversation, it gets anchored and never recovers.
+
+^ The 4 failure modes they identified:
+   1. Premature solution generation (assumes it knows before it has all the info)
+   2. Verbal anchoring (over-relying on earlier, wrong answers)
+   3. Loss-of-middle-turns (ignores middle context, over-weights turn 1 + last turn)
+   4. Verbose bloat (long responses introduce incorrect assumptions)
+
+^ Their <b style="font-weight:500;">SNOWBALL fix</b>: at each turn, re-state ALL prior info shards + the new one. Rolling recap. Partial performance recovery — no retraining needed.
+
+So I built a lightweight <code style="font-size:12px; background:var(--color-background-secondary); padding:1px 5px; border-radius:4px;">SnowballChatAgent</code> in Python — a rolling context wrapper you drop in front of any LLM API call.
+
+Key insight: the model doesn't need more intelligence — it needs better memory scaffolding from the outside.
+
+This explains why ChatGPT demos look magical and production chatbots feel broken. Same model. Different conversation structure.
+
+arXiv: 2505.06120 | ICLR 2026 Outstanding Paper Award</p>
+      <div style="margin-top:1.25rem; border-top:0.5px solid var(--color-border-tertiary); padding-top:1rem; display:flex; gap:6px; flex-wrap:wrap;">
+        <span class="tag" style="background:#E6F1FB; color:#0C447C;">#MachineLearning</span>
+        <span class="tag" style="background:#E6F1FB; color:#0C447C;">#LLM</span>
+        <span class="tag" style="background:#E6F1FB; color:#0C447C;">#AI</span>
+        <span class="tag" style="background:#E6F1FB; color:#0C447C;">#NLP</span>
+        <span class="tag" style="background:#E6F1FB; color:#0C447C;">#ConversationalAI</span>
+        <span class="tag" style="background:#E6F1FB; color:#0C447C;">#Research</span>
+      </div>
+    </div>
+    <div style="margin-top:10px; display:flex; gap:8px;">
+      <button onclick="copyPost()" style="font-size:12px; padding:5px 14px; cursor:pointer;"><i class="ti ti-copy" style="font-size:13px;vertical-align:-1px;" aria-hidden="true"></i> copy post</button>
+      <button onclick="sendPrompt('Make the Build Log #4 post shorter and punchier')" style="font-size:12px; padding:5px 14px; cursor:pointer;">make it punchier ↗</button>
+    </div>
+  </div>
+
+  <div id="panel-code" class="panel">
+    <div style="background:var(--color-background-primary); border:0.5px solid var(--color-border-tertiary); border-radius:var(--border-radius-lg); padding:1.25rem 1.5rem;">
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:1rem;">
+        <i class="ti ti-code" style="font-size:15px; color:var(--color-text-secondary);" aria-hidden="true"></i>
+        <span style="font-size:13px; color:var(--color-text-secondary); font-weight:500;">build_log_4_implementation.py</span>
+        <button onclick="copyCode()" style="margin-left:auto; font-size:12px; padding:4px 12px; cursor:pointer;"><i class="ti ti-copy" style="font-size:12px; vertical-align:-1px;" aria-hidden="true"></i> copy</button>
+      </div>
+<pre id="code-content">"""
+ICLR 2026 Outstanding Paper — "LLMs Get Lost In Multi-Turn Conversation"
+Snowball mitigation: accumulate ALL requirement shards per turn.
+"""
+
+from dataclasses import dataclass, field
+from typing import Optional
+from openai import OpenAI   # pip install openai
+
+@dataclass
+class ConversationShard:
+    turn: int
+    content: str
+    is_requirement: bool = True
+
+@dataclass
+class ConversationState:
+    shards: list[ConversationShard] = field(default_factory=list)
+    raw_history: list[dict] = field(default_factory=list)
+    turn_count: int = 0
+
+    def add_shard(self, content: str, is_requirement: bool = True):
+        self.turn_count += 1
+        self.shards.append(ConversationShard(
+            turn=self.turn_count, content=content,
+            is_requirement=is_requirement
+        ))
+
+    def build_snowball_context(self) -> str:
+        """Core of the fix: concatenate ALL accumulated requirements."""
+        reqs = [s for s in self.shards if s.is_requirement]
+        if not reqs:
+            return ""
+        lines = ["[Accumulated task requirements so far:]"]
+        for i, s in enumerate(reqs, 1):
+            lines.append(f"  {i}. {s.content}")
+        lines.append("[Please respond to ALL of the above.]")
+        return "\n".join(lines)
+
+    def reliability_score(self, responses: list[str]) -> float:
+        """Proxy: response-length variance. High variance = unreliable."""
+        if len(responses) < 2:
+            return 1.0
+        lengths = [len(r.split()) for r in responses]
+        mean = sum(lengths) / len(lengths)
+        variance = sum((l - mean)**2 for l in lengths) / len(lengths)
+        return round(1.0 - min(variance / (mean**2 + 1e-9), 1.0), 3)
+
+
+class SnowballChatAgent:
+    """Drop-in wrapper: implements SNOWBALL protocol on any LLM."""
+
+    def __init__(self, model="gpt-4o-mini",
+                 system_prompt="You are a helpful assistant.",
+                 api_key: Optional[str] = None, verbose=True):
+        self.model, self.verbose = model, verbose
+        self.system_prompt = system_prompt
+        self.state = ConversationState()
+        self.responses: list[str] = []
+        self.client = OpenAI(api_key=api_key)
+
+    def chat(self, user_message: str, is_requirement: bool = True) -> str:
+        self.state.add_shard(user_message, is_requirement)
+
+        # Snowball: prepend full accumulated context every turn
+        ctx = self.state.build_snowball_context()
+        augmented = f"{ctx}\n\nLatest: {user_message}"
+
+        self.state.raw_history.append({"role": "user", "content": augmented})
+        resp = self.client.chat.completions.create(
+            model=self.model,
+            messages=[{"role": "system", "content": self.system_prompt},
+                      *self.state.raw_history]
+        )
+        reply = resp.choices[0].message.content
+        self.state.raw_history.append({"role": "assistant", "content": reply})
+        self.responses.append(reply)
+
+        if self.verbose:
+            r = self.state.reliability_score(self.responses)
+            print(f"[Turn {self.state.turn_count}] Reliability: {r} | "
+                  f"Shards: {len(self.state.shards)}")
+        return reply
+
+    def recap(self) -> str:
+        """RECAP turn: give model one clean final shot at all requirements."""
+        return self.chat(
+            "Provide a final complete response addressing ALL requirements "
+            "stated so far.", is_requirement=False
+        )
+
+
+# ── Demo ──────────────────────────────────────────────────────────────────────
+# Simulates paper's SHARDED condition: task drip-fed across 4 turns
+
+if __name__ == "__main__":
+    agent = SnowballChatAgent(model="gpt-4o-mini", verbose=True)
+
+    agent.chat("Write a Python function that sorts a list of dicts by key.")
+    agent.chat("Handle both string and numeric values.")
+    agent.chat("None values should always appear last.")
+    agent.chat("Support ascending and descending order.")
+
+    print("\n--- RECAP TURN ---")
+    final = agent.recap()
+    print(final)</pre>
+    </div>
+  </div>
+
+  <div id="panel-paper" class="panel">
+    <div style="background:var(--color-background-primary); border:0.5px solid var(--color-border-tertiary); border-radius:var(--border-radius-lg); padding:1.5rem 1.75rem;">
+      <p style="font-size:13px; color:var(--color-text-secondary); margin:0 0 1rem;">ICLR 2026 Outstanding Paper · arXiv:2505.06120</p>
+
+      <div class="stat-row">
+        <div class="stat-box">
+          <div class="stat-num">39%</div>
+          <div class="stat-lbl">avg performance drop<br>multi-turn vs single-turn</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num">200K+</div>
+          <div class="stat-lbl">simulated conversations<br>analyzed</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num">15</div>
+          <div class="stat-lbl">LLMs tested<br>all affected</div>
+        </div>
+      </div>
+
+      <p style="font-size:13px; font-weight:500; color:var(--color-text-primary); margin:1.25rem 0 0.5rem;">The 4 failure modes</p>
+      <div class="finding"><b>1. Premature generation</b> — assumes missing info early, commits to wrong path</div>
+      <div class="finding"><b>2. Verbal anchoring</b> — over-relies on early (often wrong) answer attempts</div>
+      <div class="finding"><b>3. Loss-of-middle-turns</b> — ignores middle context, over-weights first + last turn</div>
+      <div class="finding"><b>4. Verbose bloat</b> — long responses introduce incorrect unstated assumptions</div>
+
+      <p style="font-size:13px; font-weight:500; color:var(--color-text-primary); margin:1.25rem 0 0.5rem;">Mitigations tested in the paper</p>
+      <div style="font-size:13px; color:var(--color-text-primary); line-height:1.7;">
+        <p style="margin:4px 0;"><span style="font-weight:500;">RECAP</span> — final recapitulation turn restates all shards before final answer</p>
+        <p style="margin:4px 0;"><span style="font-weight:500;">SNOWBALL</span> — every turn re-states all prior shards + new one (implemented above)</p>
+        <p style="margin:4px 0;"><span style="font-weight:500;">CONCAT</span> — collapse all turns into single prompt before calling model</p>
+      </div>
+
+      <div style="margin-top:1rem; padding:10px 14px; background:var(--color-background-secondary); border-radius:var(--border-radius-md); font-size:12px; color:var(--color-text-secondary);">
+        Key finding: performance drop is driven by <span style="font-weight:500; color:var(--color-text-primary);">unreliability</span>, not capability loss. High-aptitude models (GPT-4.1, Gemini 2.5 Pro) are reliable in single-turn but equally unreliable in multi-turn.
+      </div>
+
+      <button onclick="sendPrompt('Can you generate a diagram showing the LLM lost in conversation failure modes?')" style="margin-top:1rem; font-size:12px; padding:5px 14px; cursor:pointer; width:100%;">generate failure mode diagram ↗</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function switchTab(name) {
+  document.querySelectorAll('.tab-btn').forEach((b,i) => {
+    const names = ['post','code','paper'];
+    b.classList.toggle('active', names[i] === name);
+    b.setAttribute('aria-selected', names[i] === name);
+  });
+  document.querySelectorAll('.panel').forEach(p => {
+    p.classList.toggle('active', p.id === 'panel-' + name);
+  });
+}
+
+function copyPost() {
+  const text = document.querySelector('#panel-post p').innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = event.target.closest('button');
+    btn.textContent = '✓ copied';
+    setTimeout(() => { btn.innerHTML = '<i class="ti ti-copy" style="font-size:13px;vertical-align:-1px;"></i> copy post'; }, 1800);
+  });
+}
+
+function copyCode() {
+  const text = document.getElementById('code-content').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = event.target.closest('button');
+    btn.textContent = '✓ copied';
+    setTimeout(() => { btn.innerHTML = '<i class="ti ti-copy" style="font-size:12px;vertical-align:-1px;"></i> copy'; }, 1800);
+  });
+}
+</script>
